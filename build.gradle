@@ -1,0 +1,34 @@
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'com.github.dtrunk90'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+	jcenter()
+}
+
+dependencies {
+	compile 'com.fasterxml.jackson.core:jackson-databind:2.8.8'
+	compile 'javax.servlet:javax.servlet-api:3.0.1'
+	compile 'javax.validation:validation-api:1.1.0.Final'
+	compile 'org.slf4j:slf4j-api:1.7.25'
+	compile 'org.springframework:spring-webmvc:4.3.8.RELEASE'
+	compile 'org.springframework.boot:spring-boot-autoconfigure:1.5.3.RELEASE'
+	compile 'org.springframework.security:spring-security-core:4.2.2.RELEASE'
+
+	testCompile 'junit:junit:4.12'
+	testCompile 'org.glassfish:javax.el:3.0.0'
+	testCompile 'org.hibernate:hibernate-validator:5.4.1.Final'
+	testCompile 'org.slf4j:slf4j-simple:1.7.25'
+	testCompile 'org.springframework:spring-test:4.3.8.RELEASE'
+}
+
+test {
+	testLogging {
+		showStandardStreams = true
+		exceptionFormat = 'full'
+	}
+}

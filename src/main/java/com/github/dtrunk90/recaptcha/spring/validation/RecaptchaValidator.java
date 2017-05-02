@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
@@ -143,6 +144,10 @@ public class RecaptchaValidator implements ConstraintValidator<Recaptcha, String
 	}
 
 	private boolean isAuthenticated() {
+		if (!ClassUtils.isPresent("org.springframework.security.core.context.SecurityContextHolder", getClass().getClassLoader())) {
+			return false;
+		}
+
 		return SecurityContextHolder.getContext().getAuthentication() != null
 				&& SecurityContextHolder.getContext().getAuthentication().isAuthenticated()
 				&& !(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken);

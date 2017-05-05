@@ -120,13 +120,12 @@ public class RecaptchaValidator implements ConstraintValidator<Recaptcha, String
 			parameters.add("response", recaptchaResponse);
 			parameters.add("remoteip", request.getRemoteAddr());
 
-			VerifyResponse verifyResponse = restTemplate.postForObject(recaptchaVerifyUrl, parameters,
-					VerifyResponse.class);
+			VerifyResponse verifyResponse = restTemplate.postForObject(recaptchaVerifyUrl, parameters, VerifyResponse.class);
 
-			if (log.isTraceEnabled()) {
+			if (log.isInfoEnabled()) {
 				parameters.remove("secret");
 				parameters.add("secret", recaptchaSecretKey.replaceAll(".", "*"));
-				log.trace("reCAPTCHA Verification Request sent to {}: {}", recaptchaVerifyUrl, parameters);
+				log.info("reCAPTCHA Verification Request sent to {}: {}", recaptchaVerifyUrl, parameters);
 			}
 
 			log.info("reCAPTCHA Verification Response: {}", verifyResponse);

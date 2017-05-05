@@ -20,9 +20,15 @@ public class RecaptchaExtendedServletRequestDataBinder extends ExtendedServletRe
 	protected void addBindValues(MutablePropertyValues mpvs, ServletRequest request) {
 		super.addBindValues(mpvs, request);
 
-		String alias = recaptchaFieldMapping.getKey();
-		if (mpvs.contains(alias)) {
-			mpvs.add(recaptchaFieldMapping.getValue(), mpvs.getPropertyValue(alias));
+		String originalFieldName = recaptchaFieldMapping.getKey();
+		String aliasFieldName = recaptchaFieldMapping.getValue();
+
+		if (!mpvs.contains(originalFieldName) && mpvs.contains(aliasFieldName)) {
+			mpvs.add(originalFieldName, mpvs.get(aliasFieldName));
+		}
+
+		if (!mpvs.contains(aliasFieldName) && mpvs.contains(originalFieldName)) {
+			mpvs.add(aliasFieldName, mpvs.get(originalFieldName));
 		}
 	}
 

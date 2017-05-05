@@ -5,7 +5,6 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -24,9 +23,6 @@ public abstract class AbstractRecaptchaSpringIntegrationTests {
 
 	@Autowired
 	private WebApplicationContext context;
-
-	@Value("${recaptcha.site-key}")
-	protected String recaptchaSiteKey;
 
 	protected MockMvc mockMvc;
 

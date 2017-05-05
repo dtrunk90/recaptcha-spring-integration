@@ -1,11 +1,11 @@
 package com.github.dtrunk90.recaptcha.spring.boot.autoconfigure;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
@@ -16,49 +16,51 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
 import com.github.dtrunk90.recaptcha.spring.web.method.RecaptchaServletModelAttributeMethodProcessor;
 import com.github.dtrunk90.recaptcha.spring.web.servlet.handler.RecaptchaHandlerInterceptor;
 
 @Configuration
 @ConditionalOnWebApplication
-@AutoConfigureAfter(WebMvcAutoConfiguration.class)
+@AutoConfigureBefore(WebMvcAutoConfiguration.class)
 public class RecaptchaAutoConfiguration {
-
-	private static final Logger log = LoggerFactory.getLogger(RecaptchaAutoConfiguration.class);
-
-	@Bean
-	@ConditionalOnMissingBean(RecaptchaServletModelAttributeMethodProcessor.class)
-	public HandlerMethodArgumentResolver recaptchaServletModelAttributeMethodProcessor() {
-		return new RecaptchaServletModelAttributeMethodProcessor();
-	}
-
-	@Bean
-	@ConditionalOnMissingBean(RecaptchaHandlerInterceptor.class)
-	public HandlerInterceptor recaptchaHandlerInterceptor() {
-		return new RecaptchaHandlerInterceptor();
-	}
 
 	@Configuration
 	public static class RecaptchaWebMvcConfiguration extends WebMvcConfigurerAdapter {
 
-		@Autowired
-		private HandlerMethodArgumentResolver recaptchaServletModelAttributeMethodProcessor;
+		@Bean
+		public BeanPostProcessor recaptchaRequestMappingHandlerAdapterBeanPostProcessor() {
+			return new BeanPostProcessor() {
+				@Override
+				public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+					return bean;
+				}
 
-		@Autowired
-		private HandlerInterceptor recaptchaHandlerInterceptor;
+				@Override
+				public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+					if (bean instanceof RequestMappingHandlerAdapter) {
+						RequestMappingHandlerAdapter adapter = (RequestMappingHandlerAdapter) bean;
+						List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<HandlerMethodArgumentResolver>(adapter.getArgumentResolvers());
+						argumentResolvers.add(0, new RecaptchaServletModelAttributeMethodProcessor(adapter, true));
+						argumentResolvers.add(0, new RecaptchaServletModelAttributeMethodProcessor(adapter, false));
+						adapter.setArgumentResolvers(argumentResolvers);
+					}
 
-		@Override
-		public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-			log.warn("########## adding recaptchaServletModelAttributeMethodProcessor: {}",
-					recaptchaServletModelAttributeMethodProcessor);
-			argumentResolvers.add(recaptchaServletModelAttributeMethodProcessor);
+					return bean;
+				}
+			};
+		}
+
+		@Bean
+		@ConditionalOnMissingBean(RecaptchaHandlerInterceptor.class)
+		public HandlerInterceptor recaptchaHandlerInterceptor() {
+			return new RecaptchaHandlerInterceptor();
 		}
 
 		@Override
 		public void addInterceptors(InterceptorRegistry registry) {
-			log.warn("########## adding recaptchaHandlerInterceptor: {}", recaptchaHandlerInterceptor);
-			registry.addInterceptor(recaptchaHandlerInterceptor);
+			registry.addInterceptor(recaptchaHandlerInterceptor());
 		}
 
 	}

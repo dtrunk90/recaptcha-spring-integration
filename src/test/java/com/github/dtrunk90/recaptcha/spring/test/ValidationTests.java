@@ -4,7 +4,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -12,7 +11,6 @@ import org.springframework.test.context.TestPropertySource;
 
 import com.github.dtrunk90.recaptcha.spring.web.method.RecaptchaServletModelAttributeMethodProcessor;
 
-@Ignore
 @RunWith(Enclosed.class)
 public abstract class ValidationTests {
 
@@ -21,7 +19,6 @@ public abstract class ValidationTests {
 			+ "QdJmZeCCovPG8isjYDdUeZIfvfk_Qbb-_4lTlK6IQeIbhF8cedMl2hQvKRUOIN43-9XYAtgjADMK9fbPZT-tp6dyQO9eH7GcfLZg8kw"
 			+ "DYw1niArGu4nptPooj2l5xP4IFobG4o4djosEkoPFinXMHclnBnoNdMcV8A";
 
-	@Ignore
 	@TestPropertySource(properties = "recaptcha.secret-key=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe")
 	public static class ValidationValidTests extends AbstractRecaptchaSpringIntegrationTests {
 
@@ -35,7 +32,6 @@ public abstract class ValidationTests {
 
 	}
 
-	@Ignore
 	@TestPropertySource(properties = "recaptcha.secret-key=test")
 	public static class ValidationInvalidTests extends AbstractRecaptchaSpringIntegrationTests {
 
@@ -44,7 +40,7 @@ public abstract class ValidationTests {
 			mockMvc.perform(
 					post("/test").param(RecaptchaServletModelAttributeMethodProcessor.RECAPTCHA_RESPONSE_PARAMETER_NAME,
 							RECAPTCHA_RESPONSE_PARAMETER_VALUE))
-					.andExpect(status().isOk())
+					.andExpect(status().isBadRequest())
 					.andExpect(model().attributeHasFieldErrorCode("testForm",
 							RecaptchaServletModelAttributeMethodProcessor.RECAPTCHA_RESPONSE_PARAMETER_NAME,
 							"Recaptcha"));

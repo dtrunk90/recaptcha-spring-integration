@@ -42,7 +42,6 @@ public class RecaptchaAutoConfiguration {
 					if (bean instanceof RequestMappingHandlerAdapter) {
 						RequestMappingHandlerAdapter adapter = (RequestMappingHandlerAdapter) bean;
 						List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<HandlerMethodArgumentResolver>(adapter.getArgumentResolvers());
-						argumentResolvers.add(0, new RecaptchaServletModelAttributeMethodProcessor(adapter, true));
 						argumentResolvers.add(0, new RecaptchaServletModelAttributeMethodProcessor(adapter, false));
 						adapter.setArgumentResolvers(argumentResolvers);
 					}

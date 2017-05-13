@@ -2,9 +2,11 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'signing'
 
 group = 'com.github.dtrunk90'
-version = '0.0.1-SNAPSHOT'
+archivesBaseName = 'recaptcha-spring-integration'
+version = '1.0.0'
 
 repositories {
 	jcenter()
@@ -26,9 +28,64 @@ dependencies {
 	testCompile 'org.springframework:spring-test:4.3.8.RELEASE'
 }
 
-test {
-	testLogging {
-		showStandardStreams = true
-		exceptionFormat = 'full'
+task javadocJar(type: Jar) {
+	classifier = 'javadoc'
+	from javadoc
+}
+
+task sourcesJar(type: Jar) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+artifacts {
+	archives javadocJar, sourcesJar
+}
+
+signing {
+	sign configurations.archives
+}
+
+uploadArchives {
+	repositories {
+		mavenDeployer {
+			beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+				authentication(userName: ossrhUsername, password: ossrhPassword)
+			}
+
+			snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+				authentication(userName: ossrhUsername, password: ossrhPassword)
+			}
+
+			pom.project {
+				name 'reCAPTCHA Spring Integration'
+				packaging 'jar'
+				description 'reCAPTCHA Integration into Spring Framework'
+				url 'https://github.com/dtrunk90/recaptcha-spring-integration'
+
+				scm {
+					connection 'scm:git:git://github.com/dtrunk90/recaptcha-spring-integration.git'
+					developerConnection 'scm:git:git@github.com:dtrunk90/recaptcha-spring-integration.git'
+					url 'https://github.com/dtrunk90/recaptcha-spring-integration'
+				}
+
+				licenses {
+					license {
+						name 'The Apache License, Version 2.0'
+						url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+					}
+				}
+
+				developers {
+					developer {
+						id 'dtrunk90'
+						name 'Danny Trunk'
+						email 'dtrunk90@gmail.com'
+					}
+				}
+			}
+		}
 	}
 }

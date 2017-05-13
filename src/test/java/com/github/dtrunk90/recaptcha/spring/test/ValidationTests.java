@@ -2,7 +2,6 @@ package com.github.dtrunk90.recaptcha.spring.test;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -27,7 +26,7 @@ public abstract class ValidationTests {
 			mockMvc.perform(
 					post("/test").param(RecaptchaServletModelAttributeMethodProcessor.RECAPTCHA_RESPONSE_PARAMETER_NAME,
 							RECAPTCHA_RESPONSE_PARAMETER_VALUE))
-					.andExpect(status().isOk()).andExpect(model().attributeHasNoErrors("testForm"));
+					.andExpect(model().attributeHasNoErrors("testForm"));
 		}
 
 	}
@@ -40,10 +39,7 @@ public abstract class ValidationTests {
 			mockMvc.perform(
 					post("/test").param(RecaptchaServletModelAttributeMethodProcessor.RECAPTCHA_RESPONSE_PARAMETER_NAME,
 							RECAPTCHA_RESPONSE_PARAMETER_VALUE))
-					.andExpect(status().isBadRequest())
-					.andExpect(model().attributeHasFieldErrorCode("testForm",
-							RecaptchaServletModelAttributeMethodProcessor.RECAPTCHA_RESPONSE_PARAMETER_NAME,
-							"Recaptcha"));
+					.andExpect(model().attributeHasFieldErrorCode("testForm", "recaptchaResponse", "Recaptcha"));
 		}
 
 	}

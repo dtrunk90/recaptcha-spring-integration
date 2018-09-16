@@ -5,14 +5,14 @@ reCAPTCHA Spring Integration
 <dependency>
 	<groupId>com.github.dtrunk90</groupId>
 	<artifactId>recaptcha-spring-integration</artifactId>
-	<version>1.0.0</version>
+	<version>2.0.0</version>
 </dependency>
 ```
 
 Usage
 -----
 
-Simply extend your `@Valid` annotated Form object from [AbstractRecaptchaForm][1].
+Simply extend your `@ModelAttribute` (important!) and `@Valid` annotated Form object from [AbstractRecaptchaForm][1].
 Alternatively, if the default doesn't fit your needs you can add your own `@Recaptcha` annotated field/method.
 Per default authenticated users will be skipped. So you don't need to display the widget if the user is authenticated.
 Add the mandatory properties to your project (the URL is optional):

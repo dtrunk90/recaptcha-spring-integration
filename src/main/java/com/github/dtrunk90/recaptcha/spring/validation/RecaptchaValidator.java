@@ -79,15 +79,16 @@ public class RecaptchaValidator implements ConstraintValidator<Recaptcha, String
 		}
 
 		public static enum ErrorCode {
-			MissingSecret, InvalidSecret, MissingResponse, InvalidResponse;
+			MissingSecret, InvalidSecret, MissingResponse, InvalidResponse, BadRequest;
 
-			private static Map<String, ErrorCode> errorsMap = new HashMap<String, ErrorCode>(4);
+			private static Map<String, ErrorCode> errorsMap = new HashMap<>(5);
 
 			static {
 				errorsMap.put("missing-input-secret", MissingSecret);
 				errorsMap.put("invalid-input-secret", InvalidSecret);
 				errorsMap.put("missing-input-response", MissingResponse);
 				errorsMap.put("invalid-input-response", InvalidResponse);
+				errorsMap.put("bad-request", BadRequest);
 			}
 
 			@JsonCreator

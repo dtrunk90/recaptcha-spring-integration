@@ -6,7 +6,7 @@ apply plugin: 'signing'
 
 group = 'com.github.dtrunk90'
 archivesBaseName = 'recaptcha-spring-integration'
-version = '2.0.0'
+version = '2.0.1'
 
 repositories {
 	jcenter()

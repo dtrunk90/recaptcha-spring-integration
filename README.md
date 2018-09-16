@@ -5,7 +5,7 @@ reCAPTCHA Spring Integration
 <dependency>
 	<groupId>com.github.dtrunk90</groupId>
 	<artifactId>recaptcha-spring-integration</artifactId>
-	<version>2.0.0</version>
+	<version>2.0.1</version>
 </dependency>
 ```
 

@@ -8,14 +8,14 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
 import com.github.dtrunk90.recaptcha.spring.web.method.RecaptchaServletModelAttributeMethodProcessor;
@@ -27,7 +27,7 @@ import com.github.dtrunk90.recaptcha.spring.web.servlet.handler.RecaptchaHandler
 public class RecaptchaAutoConfiguration {
 
 	@Configuration
-	public static class RecaptchaWebMvcConfiguration extends WebMvcConfigurerAdapter {
+	public static class RecaptchaWebMvcConfiguration implements WebMvcConfigurer {
 
 		@Bean
 		public BeanPostProcessor recaptchaRequestMappingHandlerAdapterBeanPostProcessor() {
@@ -41,7 +41,7 @@ public class RecaptchaAutoConfiguration {
 				public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 					if (bean instanceof RequestMappingHandlerAdapter) {
 						RequestMappingHandlerAdapter adapter = (RequestMappingHandlerAdapter) bean;
-						List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<HandlerMethodArgumentResolver>(adapter.getArgumentResolvers());
+						List<HandlerMethodArgumentResolver> argumentResolvers = new ArrayList<>(adapter.getArgumentResolvers());
 						argumentResolvers.add(0, new RecaptchaServletModelAttributeMethodProcessor(adapter, false));
 						adapter.setArgumentResolvers(argumentResolvers);
 					}

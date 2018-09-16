@@ -2,7 +2,6 @@ package com.github.dtrunk90.recaptcha.spring.web.method;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.AbstractMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,11 +16,9 @@ import com.github.dtrunk90.recaptcha.spring.web.bind.RecaptchaExtendedServletReq
 
 public class RecaptchaServletModelAttributeMethodProcessor extends ServletModelAttributeMethodProcessor {
 
-	public static final String RECAPTCHA_RESPONSE_PARAMETER_NAME = "g-recaptcha-response";
-
 	private final RequestMappingHandlerAdapter requestMappingHandlerAdapter;
 
-	private final Map<Class<?>, Map.Entry<String, String>> recaptchaFieldMap = new ConcurrentHashMap<Class<?>, Map.Entry<String, String>>();
+	private final Map<Class<?>, String> recaptchaFieldMap = new ConcurrentHashMap<>();
 
 	public RecaptchaServletModelAttributeMethodProcessor(RequestMappingHandlerAdapter requestMappingHandlerAdapter, boolean annotationNotRequired) {
 		super(annotationNotRequired);
@@ -33,30 +30,30 @@ public class RecaptchaServletModelAttributeMethodProcessor extends ServletModelA
 		Object target = binder.getTarget();
 		Class<?> targetClass = target.getClass();
 
-		Map.Entry<String, String> recaptchaFieldMapping = recaptchaFieldMap.get(targetClass);
+		String recaptchaFieldName = recaptchaFieldMap.get(targetClass);
 
-		if (recaptchaFieldMapping == null) {
-			recaptchaFieldMapping = analyzeClass(targetClass);
+		if (recaptchaFieldName == null) {
+			recaptchaFieldName = analyzeClass(targetClass);
 
-			if (recaptchaFieldMapping != null) {
-				recaptchaFieldMap.put(targetClass, recaptchaFieldMapping);
+			if (recaptchaFieldName != null) {
+				recaptchaFieldMap.put(targetClass, recaptchaFieldName);
 			}
 		}
 
-		if (recaptchaFieldMapping != null) {
-			binder = new RecaptchaExtendedServletRequestDataBinder(target, binder.getObjectName(), recaptchaFieldMapping);
+		if (recaptchaFieldName != null) {
+			binder = new RecaptchaExtendedServletRequestDataBinder(target, binder.getObjectName(), recaptchaFieldName);
 			requestMappingHandlerAdapter.getWebBindingInitializer().initBinder(binder, request);
 		}
 
 		super.bindRequestParameters(binder, request);
 	}
 
-	private static Map.Entry<String, String> analyzeClass(Class<?> targetClass) {
+	private static String analyzeClass(Class<?> targetClass) {
 		for (Field field : targetClass.getDeclaredFields()) {
 			Recaptcha recaptchaAnnotation = field.getAnnotation(Recaptcha.class);
 
 			if (recaptchaAnnotation != null) {
-				return new AbstractMap.SimpleImmutableEntry<String, String>(field.getName(), RECAPTCHA_RESPONSE_PARAMETER_NAME);
+				return field.getName();
 			}
 		}
 
@@ -65,8 +62,7 @@ public class RecaptchaServletModelAttributeMethodProcessor extends ServletModelA
 
 			if (recaptchaAnnotation != null) {
 				try {
-					Field field = targetClass.getField(StringUtils.uncapitalize(method.getName().substring(3)));
-					return new AbstractMap.SimpleImmutableEntry<String, String>(field.getName(), RECAPTCHA_RESPONSE_PARAMETER_NAME);
+					return targetClass.getField(StringUtils.uncapitalize(method.getName().substring(3))).getName();
 				} catch (NoSuchFieldException e) {
 				}
 			}

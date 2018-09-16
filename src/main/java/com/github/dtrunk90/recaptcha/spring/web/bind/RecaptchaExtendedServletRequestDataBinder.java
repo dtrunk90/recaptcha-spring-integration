@@ -1,7 +1,5 @@
 package com.github.dtrunk90.recaptcha.spring.web.bind;
 
-import java.util.Map;
-
 import javax.servlet.ServletRequest;
 
 import org.springframework.beans.MutablePropertyValues;
@@ -9,26 +7,21 @@ import org.springframework.web.servlet.mvc.method.annotation.ExtendedServletRequ
 
 public class RecaptchaExtendedServletRequestDataBinder extends ExtendedServletRequestDataBinder {
 
-	private final Map.Entry<String, String> recaptchaFieldMapping;
+	public static final String RECAPTCHA_RESPONSE_PARAMETER_NAME = "g-recaptcha-response";
 
-	public RecaptchaExtendedServletRequestDataBinder(Object target, String objectName, Map.Entry<String, String> recaptchaFieldMapping) {
+	private final String recaptchaFieldName;
+
+	public RecaptchaExtendedServletRequestDataBinder(Object target, String objectName, String recaptchaFieldName) {
 		super(target, objectName);
-		this.recaptchaFieldMapping = recaptchaFieldMapping;
+		this.recaptchaFieldName = recaptchaFieldName;
 	}
 
 	@Override
 	protected void addBindValues(MutablePropertyValues mpvs, ServletRequest request) {
 		super.addBindValues(mpvs, request);
 
-		String originalFieldName = recaptchaFieldMapping.getKey();
-		String aliasFieldName = recaptchaFieldMapping.getValue();
-
-		if (!mpvs.contains(originalFieldName) && mpvs.contains(aliasFieldName)) {
-			mpvs.add(originalFieldName, mpvs.get(aliasFieldName));
-		}
-
-		if (!mpvs.contains(aliasFieldName) && mpvs.contains(originalFieldName)) {
-			mpvs.add(aliasFieldName, mpvs.get(originalFieldName));
+		if (mpvs.contains(RECAPTCHA_RESPONSE_PARAMETER_NAME)) {
+			mpvs.add(recaptchaFieldName, mpvs.getPropertyValue(RECAPTCHA_RESPONSE_PARAMETER_NAME).getValue());
 		}
 	}
 

@@ -3,12 +3,11 @@ package com.github.dtrunk90.recaptcha.spring.test;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 
+import com.github.dtrunk90.recaptcha.spring.web.bind.RecaptchaExtendedServletRequestDataBinder;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.TestPropertySource;
-
-import com.github.dtrunk90.recaptcha.spring.web.method.RecaptchaServletModelAttributeMethodProcessor;
 
 @RunWith(Enclosed.class)
 public abstract class ValidationTests {
@@ -24,7 +23,7 @@ public abstract class ValidationTests {
 		@Test
 		public void postTest_hasNoErrors() throws Exception {
 			mockMvc.perform(
-					post("/test").param(RecaptchaServletModelAttributeMethodProcessor.RECAPTCHA_RESPONSE_PARAMETER_NAME,
+					post("/test").param(RecaptchaExtendedServletRequestDataBinder.RECAPTCHA_RESPONSE_PARAMETER_NAME,
 							RECAPTCHA_RESPONSE_PARAMETER_VALUE))
 					.andExpect(model().attributeHasNoErrors("testForm"));
 		}
@@ -37,7 +36,7 @@ public abstract class ValidationTests {
 		@Test
 		public void postTest_hasFieldError() throws Exception {
 			mockMvc.perform(
-					post("/test").param(RecaptchaServletModelAttributeMethodProcessor.RECAPTCHA_RESPONSE_PARAMETER_NAME,
+					post("/test").param(RecaptchaExtendedServletRequestDataBinder.RECAPTCHA_RESPONSE_PARAMETER_NAME,
 							RECAPTCHA_RESPONSE_PARAMETER_VALUE))
 					.andExpect(model().attributeHasFieldErrorCode("testForm", "recaptchaResponse", "Recaptcha"));
 		}

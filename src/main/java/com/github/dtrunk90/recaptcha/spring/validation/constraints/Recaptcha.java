@@ -13,13 +13,13 @@ import javax.validation.Payload;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.dtrunk90.recaptcha.spring.validation.RecaptchaValidator;
-import com.github.dtrunk90.recaptcha.spring.web.method.RecaptchaServletModelAttributeMethodProcessor;
+import com.github.dtrunk90.recaptcha.spring.web.bind.RecaptchaExtendedServletRequestDataBinder;
 
 @Documented
 @Retention(RUNTIME)
 @Target({ ANNOTATION_TYPE, FIELD })
 @Constraint(validatedBy = RecaptchaValidator.class)
-@JsonProperty(RecaptchaServletModelAttributeMethodProcessor.RECAPTCHA_RESPONSE_PARAMETER_NAME)
+@JsonProperty(RecaptchaExtendedServletRequestDataBinder.RECAPTCHA_RESPONSE_PARAMETER_NAME)
 public @interface Recaptcha {
 
 	String message() default "{com.github.dtrunk90.recaptcha.spring.validation.constraints.Recaptcha.message}";
